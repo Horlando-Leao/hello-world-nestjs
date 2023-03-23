@@ -1,6 +1,13 @@
-import { CreateUserDTO, ResponseUserDTO } from 'src/dto/user.dto';
+import { OnModuleInit } from '@nestjs/common';
+import { User, Prisma } from '@prisma/client';
 
 export abstract class RepositoryUser {
-  abstract create(user: CreateUserDTO): Promise<void>;
-  abstract get(userId: string): Promise<ResponseUserDTO>;
+  abstract create(userCreateInput: Prisma.UserCreateInput): Promise<User>;
+  abstract findAll(userWhereInput: Prisma.UserWhereInput): Promise<User[]>;
+  abstract find(
+    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+  ): Promise<User>;
+  abstract update(
+    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
+  ): Promise<User>;
 }
