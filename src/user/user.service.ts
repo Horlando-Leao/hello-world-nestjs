@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { RepositoryUser } from 'src/interfaces/repositories/user.agreement';
 import { User, Prisma } from '@prisma/client';
-import { ModuleRef } from '@nestjs/core';
+import { PrismaService } from 'src/database/prisma.service';
 
 @Injectable()
 export class UserService implements RepositoryUser {
-  constructor() {
-    // asd
-  }
+  constructor(private prisma: PrismaService) {}
 
   create(userCreateInput: Prisma.UserCreateInput): Promise<User> {
     throw new Error('Method not implemented.');

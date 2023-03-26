@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Put } from '@nestjs/common';
+import { Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { CreateUserDTO, UpdateUserDTO } from 'src/dto/user.dto';
 import { UserService } from './user.service';
 
 @Controller('api/v1/users')
@@ -6,23 +7,22 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(): void {
-    throw new Error('Method not implemented.');
+  create(data: CreateUserDTO): any {
+    return { data };
+  }
+
+  @Get()
+  findAll(@Query('usersEmail') userEmail: string[]): any {
+    return { userEmail };
   }
 
   @Get(':userEmail')
-  findAllByName(): void {
-    this.userService.find({ email: 'user' });
-    throw new Error('Method not implemented.');
-  }
-
-  @Get(':userEmail')
-  findByEmail(): void {
-    throw new Error('Method not implemented.');
+  find(@Param('userEmail') userEmail: string): any {
+    return { userEmail };
   }
 
   @Put(':userEmail')
-  updateByEmail(): void {
-    throw new Error('Method not implemented.');
+  update(@Param('userEmail') userEmail: string, data: UpdateUserDTO): any {
+    return { userEmail, data };
   }
 }

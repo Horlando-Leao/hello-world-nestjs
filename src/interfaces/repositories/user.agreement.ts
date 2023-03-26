@@ -1,13 +1,6 @@
-import { OnModuleInit } from '@nestjs/common';
-import { User, Prisma } from '@prisma/client';
-
 export abstract class RepositoryUser {
-  abstract create(userCreateInput: Prisma.UserCreateInput): Promise<User>;
-  abstract findAll(userWhereInput: Prisma.UserWhereInput): Promise<User[]>;
-  abstract find(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User>;
-  abstract update(
-    userWhereUniqueInput: Prisma.UserWhereUniqueInput,
-  ): Promise<User>;
+  abstract create(userCreateInput: any): Promise<any>;
+  abstract findAll(userWhereInput: any): Promise<any[]>;
+  abstract find(userWhereUniqueInput: any): Promise<any>;
+  abstract update(userWhereUniqueInput: any): Promise<any>;
 }
