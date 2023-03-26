@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsString, Length, IsEmail } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsString,
+  Length,
+  IsEmail,
+  IsArray,
+} from 'class-validator';
 
 export abstract class CreateUserDTO {
   @Length(2, 100)
@@ -22,4 +29,19 @@ export abstract class ResponseUserDTO {
   name: string;
   email: string;
   createdAt: string;
+}
+
+export abstract class FindAllUsersByNameDTO {
+  @Type(() => String)
+  @IsArray()
+  @IsString({ each: true })
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]), {
+    toClassOnly: true,
+  })
+  usersEmail?: string[];
+}
+
+export class FindUserByEmailDTO {
+  @IsEmail()
+  userEmail: string;
 }
