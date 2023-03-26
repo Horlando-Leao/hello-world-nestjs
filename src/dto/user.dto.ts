@@ -31,7 +31,7 @@ export abstract class ResponseUserDTO {
   createdAt: string;
 }
 
-export abstract class FindAllUsersByNameDTO {
+export abstract class FindAllUsersByEmailDTO {
   @Type(() => String)
   @IsArray()
   @IsString({ each: true })
@@ -39,6 +39,16 @@ export abstract class FindAllUsersByNameDTO {
     toClassOnly: true,
   })
   usersEmail?: string[];
+}
+
+export abstract class FindAllUsersByNameDTO {
+  @Type(() => String)
+  @IsArray()
+  @IsString({ each: true })
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]), {
+    toClassOnly: true,
+  })
+  usersName?: string[];
 }
 
 export class FindUserByEmailDTO {

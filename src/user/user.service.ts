@@ -11,12 +11,12 @@ export class UserService implements RepositoryUser {
     return this.prisma.user.create({ data: userCreateInput });
   }
 
-  findAll(userWhereInput: Prisma.UserWhereInput): Promise<User[]> {
-    throw new Error('Method not implemented.');
+  findAll(userFindManyArgs: Prisma.UserFindManyArgs): Promise<User[]> {
+    return this.prisma.user.findMany(userFindManyArgs);
   }
 
-  find(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User> {
-    throw new Error('Method not implemented.');
+  find(userWhereUniqueInput: Prisma.UserFindFirstArgs): Promise<User> {
+    return this.prisma.user.findFirst(userWhereUniqueInput);
   }
 
   update(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User> {

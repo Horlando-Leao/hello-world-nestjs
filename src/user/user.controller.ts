@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { User } from '@prisma/client';
 import {
   CreateUserDTO,
   FindAllUsersByNameDTO,
@@ -23,15 +24,32 @@ export class UserController {
   }
 
   @Get()
-  findAll(
+  async findAll(
     @Query() usersName: FindAllUsersByNameDTO,
-  ): Promise<ResponseUserDTO[]> | any {
-    return { usersName };
+  ): Promise<ResponseUserDTO[]> {
+    const rs = await this.userService.findAll({
+      where: { name: { in: usersName.usersName } },
+    });
+    const dto = rs.map((user: User) => {
+      return {
+        name: user.name,
+        email: user.email,
+        createdAt: new Date(user.createdAt).toISOString(),
+      };
+    });
+    return dto;
   }
 
   @Get(':userEmail')
-  find(@Param() userEmail: FindUserByEmailDTO): Promise<ResponseUserDTO> | any {
-    return { userEmail };
+  async find(@Param() userEmail: FindUserByEmailDTO): Promise<ResponseUserDTO> {
+    const rs = await this.userService.find({
+      where: { email: userEmail.userEmail },
+    });
+    return {
+      name: rs.name,
+      email: rs.email,
+      createdAt: new Date(rs.createdAt).toISOString(),
+    };
   }
 
   @Put(':userEmail')
