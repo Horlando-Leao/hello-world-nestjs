@@ -8,7 +8,7 @@ export class UserService implements RepositoryUser {
   constructor(private prisma: PrismaService) {}
 
   create(userCreateInput: Prisma.UserCreateInput): Promise<User> {
-    throw new Error('Method not implemented.');
+    return this.prisma.user.create({ data: userCreateInput });
   }
 
   findAll(userWhereInput: Prisma.UserWhereInput): Promise<User[]> {

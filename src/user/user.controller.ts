@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { IsEmail, isEmail, IS_EMAIL } from 'class-validator';
 import {
   CreateUserDTO,
   FindAllUsersByNameDTO,
   FindUserByEmailDTO,
+  ResponseUserDTO,
   UpdateUserDTO,
 } from 'src/dto/user.dto';
 import { UserService } from './user.service';
@@ -13,17 +13,24 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  create(@Body() data: CreateUserDTO): any {
-    return { data };
+  async create(@Body() data: CreateUserDTO): Promise<ResponseUserDTO> {
+    const rs = await this.userService.create({ ...data });
+    return {
+      name: rs.name,
+      email: rs.email,
+      createdAt: new Date(rs.createdAt).toISOString(),
+    };
   }
 
   @Get()
-  findAll(@Query() usersName: FindAllUsersByNameDTO): any {
+  findAll(
+    @Query() usersName: FindAllUsersByNameDTO,
+  ): Promise<ResponseUserDTO[]> | any {
     return { usersName };
   }
 
   @Get(':userEmail')
-  find(@Param() userEmail: FindUserByEmailDTO): any {
+  find(@Param() userEmail: FindUserByEmailDTO): Promise<ResponseUserDTO> | any {
     return { userEmail };
   }
 
@@ -31,7 +38,7 @@ export class UserController {
   update(
     @Param('userEmail') userEmail: string,
     @Body() data: UpdateUserDTO,
-  ): any {
+  ): Promise<ResponseUserDTO> | any {
     return { userEmail, ...data };
   }
 }
