@@ -1,26 +1,25 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
-import { User } from '@prisma/client';
 import {
   CreateUserDTO,
   FindAllUsersByNameDTO,
   FindUserByEmailDTO,
   ResponseUserDTO,
   UpdateUserDTO,
-} from 'src/dto/user.dto';
+} from './dto/user.dto';
+import { UserDTO } from './dto/user.mapper';
 import { UserService } from './user.service';
 
 @Controller('api/v1/users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private dto: UserDTO,
+  ) {}
 
   @Post()
   async create(@Body() data: CreateUserDTO): Promise<ResponseUserDTO> {
     const rs = await this.userService.create({ ...data });
-    return {
-      name: rs.name,
-      email: rs.email,
-      createdAt: new Date(rs.createdAt).toISOString(),
-    };
+    return this.dto.toDTO(rs);
   }
 
   @Get()
@@ -30,14 +29,7 @@ export class UserController {
     const rs = await this.userService.findAll({
       where: { name: { in: usersName.usersName } },
     });
-    const dto = rs.map((user: User) => {
-      return {
-        name: user.name,
-        email: user.email,
-        createdAt: new Date(user.createdAt).toISOString(),
-      };
-    });
-    return dto;
+    return this.dto.toDTOColletion(rs);
   }
 
   @Get(':userEmail')
@@ -45,11 +37,7 @@ export class UserController {
     const rs = await this.userService.find({
       where: { email: userEmail.userEmail },
     });
-    return {
-      name: rs.name,
-      email: rs.email,
-      createdAt: new Date(rs.createdAt).toISOString(),
-    };
+    return this.dto.toDTO(rs);
   }
 
   @Put(':userEmail')
@@ -61,10 +49,6 @@ export class UserController {
       where: { email: userEmail.userEmail },
       data: { ...data },
     });
-    return {
-      name: rs.name,
-      email: rs.email,
-      createdAt: new Date(rs.createdAt).toISOString(),
-    };
+    return this.dto.toDTO(rs);
   }
 }
