@@ -53,10 +53,18 @@ export class UserController {
   }
 
   @Put(':userEmail')
-  update(
-    @Param('userEmail') userEmail: string,
+  async update(
+    @Param() userEmail: FindUserByEmailDTO,
     @Body() data: UpdateUserDTO,
-  ): Promise<ResponseUserDTO> | any {
-    return { userEmail, ...data };
+  ): Promise<ResponseUserDTO> {
+    const rs = await this.userService.update({
+      where: { email: userEmail.userEmail },
+      data: { ...data },
+    });
+    return {
+      name: rs.name,
+      email: rs.email,
+      createdAt: new Date(rs.createdAt).toISOString(),
+    };
   }
 }

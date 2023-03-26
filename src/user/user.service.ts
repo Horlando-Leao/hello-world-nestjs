@@ -19,7 +19,7 @@ export class UserService implements RepositoryUser {
     return this.prisma.user.findFirst(userWhereUniqueInput);
   }
 
-  update(userWhereUniqueInput: Prisma.UserWhereUniqueInput): Promise<User> {
-    throw new Error('Method not implemented.');
+  update(userUpdateArgs: Prisma.UserUpdateArgs): Promise<User> {
+    return this.prisma.user.update(userUpdateArgs);
   }
 }
