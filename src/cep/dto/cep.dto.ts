@@ -1,5 +1,10 @@
+import { IsNotEmpty, IsNumber, Length } from 'class-validator';
+
 export abstract class GetCepDTO {
-  cep: string;
+  @Length(8, 8)
+  @IsNotEmpty()
+  @IsNumber()
+  cep: number;
 }
 
 export abstract class ResponseCepDTO {
