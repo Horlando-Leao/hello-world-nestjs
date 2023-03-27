@@ -9,8 +9,6 @@ import { ApiCep } from 'src/interfaces/apiexternal/cep.agreement';
 import { GetCepDTO, ResponseCepAPIDTO } from './dto/cep.dto';
 import { CepDTO } from './dto/cep.factory';
 
-const cache: any = {};
-
 @Injectable()
 export class CepService implements ApiCep {
   constructor(
