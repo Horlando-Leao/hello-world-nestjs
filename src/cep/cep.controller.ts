@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { GetCepDTO, ResponseCepDTO } from './dto/cep.dto';
 import { CepService } from './cep.service';
-import { CepDTO } from './dto/cep.mapper';
+import { CepDTO } from './dto/cep.factory';
 
 @Controller('api/v1/cep')
 export class CepController {

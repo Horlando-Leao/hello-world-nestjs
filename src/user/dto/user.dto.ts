@@ -48,7 +48,7 @@ export abstract class FindAllUsersByNameDTO {
   @Transform(({ value }) => (Array.isArray(value) ? value : [value]), {
     toClassOnly: true,
   })
-  usersName?: string[];
+  usersName: string[];
 }
 
 export class FindUserByEmailDTO {

@@ -6,7 +6,7 @@ import {
   ResponseUserDTO,
   UpdateUserDTO,
 } from './dto/user.dto';
-import { UserDTO } from './dto/user.mapper';
+import { UserDTO } from './dto/user.factory';
 import { UserService } from './user.service';
 
 @Controller('api/v1/users')
@@ -18,26 +18,23 @@ export class UserController {
 
   @Post()
   async create(@Body() data: CreateUserDTO): Promise<ResponseUserDTO> {
-    const rs = await this.userService.create({ ...data });
-    return this.dto.toDTO(rs);
+    return this.dto.toDTO(await this.userService.create({ ...data }));
   }
 
   @Get()
   async findAll(
     @Query() usersName: FindAllUsersByNameDTO,
   ): Promise<ResponseUserDTO[]> {
-    const rs = await this.userService.findAll({
-      where: { name: { in: usersName.usersName } },
-    });
-    return this.dto.toDTOColletion(rs);
+    return this.dto.toDTOColletion(
+      await this.userService.findAllByUserName(usersName.usersName),
+    );
   }
 
   @Get(':userEmail')
   async find(@Param() userEmail: FindUserByEmailDTO): Promise<ResponseUserDTO> {
-    const rs = await this.userService.find({
-      where: { email: userEmail.userEmail },
-    });
-    return this.dto.toDTO(rs);
+    return this.dto.toDTO(
+      await this.userService.findByUserEmail(userEmail.userEmail),
+    );
   }
 
   @Put(':userEmail')
@@ -45,10 +42,8 @@ export class UserController {
     @Param() userEmail: FindUserByEmailDTO,
     @Body() data: UpdateUserDTO,
   ): Promise<ResponseUserDTO> {
-    const rs = await this.userService.update({
-      where: { email: userEmail.userEmail },
-      data: { ...data },
-    });
-    return this.dto.toDTO(rs);
+    return this.dto.toDTO(
+      await this.userService.updateByUserEmail(userEmail.userEmail, data),
+    );
   }
 }
