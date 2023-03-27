@@ -9,6 +9,6 @@ export class CepController {
 
   @Get(':cep')
   async find(@Param() cep: GetCepDTO): Promise<ResponseCepDTO> {
-    return this.cepService.getCep(cep);
+    return this.dto.toDTO(await this.cepService.getCep(cep));
   }
 }

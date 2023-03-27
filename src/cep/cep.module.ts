@@ -1,12 +1,12 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
-import { UserDTO } from './user/dto/user.mapper';
-import { UserController } from './user.controller';
-import { UserService } from './cep.service';
+import { CepController } from './cep.controller';
+import { CepService } from './cep.service';
+import { CepDTO } from './dto/cep.mapper';
 
 @Module({
-  controllers: [UserController],
-  providers: [UserService, PrismaService, UserDTO],
-  imports: [],
+  controllers: [CepController],
+  providers: [CepService, CepDTO],
+  imports: [HttpModule],
 })
-export class UserModule {}
+export class CepModule {}

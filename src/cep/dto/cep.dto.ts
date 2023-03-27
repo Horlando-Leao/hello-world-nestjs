@@ -1,13 +1,12 @@
-import { IsNotEmpty, IsNumber, Length } from 'class-validator';
+import { IsPostalCode } from 'class-validator';
+import { LocaleSystem } from 'src/globals/system';
 
 export abstract class GetCepDTO {
-  @Length(8, 8)
-  @IsNotEmpty()
-  @IsNumber()
-  cep: number;
+  @IsPostalCode(LocaleSystem.POSTAL_CODE_FORMAT)
+  cep: string;
 }
 
-export abstract class ResponseCepDTO {
+export abstract class ResponseCepAPIDTO {
   cep: string;
   logradouro: string;
   complemento: string;
@@ -18,4 +17,8 @@ export abstract class ResponseCepDTO {
   gia: string;
   ddd: string;
   siafi: string;
+}
+
+export abstract class ResponseCepDTO {
+  fullEndereco: string;
 }
