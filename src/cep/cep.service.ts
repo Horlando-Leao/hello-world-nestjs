@@ -2,13 +2,19 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
+import { PrismaService } from 'src/database/prisma.service';
 import config from 'src/globals/enviroments';
 import { ApiCep } from 'src/interfaces/apiexternal/cep.agreement';
 import { GetCepDTO, ResponseCepAPIDTO } from './dto/cep.dto';
+import { CepDTO } from './dto/cep.factory';
 
 @Injectable()
 export class CepService implements ApiCep {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly prisma: PrismaService,
+    private readonly dto: CepDTO,
+  ) {}
 
   private makeURLRequest(cep: string): string {
     const url = config().api.via_cep;
@@ -16,6 +22,12 @@ export class CepService implements ApiCep {
   }
 
   async getCep(cep: GetCepDTO): Promise<ResponseCepAPIDTO> {
+    const cepDB = await this.prisma.cep.findFirst({ where: { cep: cep.cep } });
+    if (cepDB) {
+      console.log('BUSCA NO BANCO');
+      return this.dto.toTextCepDTO(cepDB.data);
+    }
+
     const { data } = await firstValueFrom(
       this.httpService
         .get<ResponseCepAPIDTO>(this.makeURLRequest(cep.cep))
@@ -26,6 +38,10 @@ export class CepService implements ApiCep {
           }),
         ),
     );
+    console.log('BUSCA NA API');
+    await this.prisma.cep.create({
+      data: { cep: cep.cep, data: this.dto.toCepTextDTO(data) },
+    });
     return data;
   }
   getCepMock(cep: GetCepDTO): Promise<ResponseCepAPIDTO> {

@@ -8,4 +8,12 @@ export class CepDTO {
       fullEndereco: `${cep.logradouro}, ${cep.bairro} - ${cep.localidade}/${cep.uf}`,
     };
   }
+
+  toCepTextDTO(cep: ResponseCepAPIDTO): string {
+    return JSON.stringify(cep);
+  }
+
+  toTextCepDTO(cep: string): ResponseCepAPIDTO {
+    return JSON.parse(cep);
+  }
 }

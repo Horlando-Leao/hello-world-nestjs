@@ -16,3 +16,10 @@ model User {
   email     String   @unique
   name      String?
 }
+
+model Cep {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  cep       String   @unique
+  data      String?
+}
