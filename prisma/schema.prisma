@@ -23,3 +23,4 @@ model Cep {
   cep       String   @unique
   data      String?
 }
+// ideal é cep virar un index, mas o sqlite não suporta

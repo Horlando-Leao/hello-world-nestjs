@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { CacheModule, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CepModule } from './cep/cep.module';
 import { HelloController } from './hello/hello.controller';

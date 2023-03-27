@@ -1,18 +1,22 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
+import { Cache } from 'cache-manager';
 import { PrismaService } from 'src/database/prisma.service';
 import config from 'src/globals/enviroments';
 import { ApiCep } from 'src/interfaces/apiexternal/cep.agreement';
 import { GetCepDTO, ResponseCepAPIDTO } from './dto/cep.dto';
 import { CepDTO } from './dto/cep.factory';
 
+const cache: any = {};
+
 @Injectable()
 export class CepService implements ApiCep {
   constructor(
     private readonly httpService: HttpService,
     private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private readonly dto: CepDTO,
   ) {}
 
@@ -21,29 +25,68 @@ export class CepService implements ApiCep {
     return url.replace('{PARAM_CEP}', cep);
   }
 
-  async getCep(cep: GetCepDTO): Promise<ResponseCepAPIDTO> {
-    const cepDB = await this.prisma.cep.findFirst({ where: { cep: cep.cep } });
+  async getCepDatabase(cep: string): Promise<ResponseCepAPIDTO> {
+    console.log('CEP - DATABASE');
+    const cepDB = await this.prisma.cep.findFirst({ where: { cep: cep } });
     if (cepDB) {
-      console.log('BUSCA NO BANCO');
       return this.dto.toTextCepDTO(cepDB.data);
     }
+    return null;
+  }
 
-    const { data } = await firstValueFrom(
-      this.httpService
-        .get<ResponseCepAPIDTO>(this.makeURLRequest(cep.cep))
-        .pipe(
-          catchError((error: AxiosError) => {
-            console.log(error.response.data);
-            throw new Error('erro na api do viacep');
-          }),
-        ),
-    );
-    console.log('BUSCA NA API');
+  async saveCepDatabase(cep: string, data: ResponseCepAPIDTO): Promise<void> {
     await this.prisma.cep.create({
-      data: { cep: cep.cep, data: this.dto.toCepTextDTO(data) },
+      data: { cep: cep, data: this.dto.toCepTextDTO(data) },
     });
+  }
+
+  async getCepViacep(cep: string): Promise<ResponseCepAPIDTO> {
+    console.log('CEP - API_VIACEP');
+    const { data } = await firstValueFrom(
+      this.httpService.get<ResponseCepAPIDTO>(this.makeURLRequest(cep)).pipe(
+        catchError((error: AxiosError) => {
+          console.log(error.response.data);
+          throw new Error('erro na api do viacep');
+        }),
+      ),
+    );
+    await this.saveCepDatabase(cep, data);
+    await this.saveCepCache(cep, data);
     return data;
   }
+
+  async getCepCache(cep: string): Promise<ResponseCepAPIDTO> {
+    console.log('CEP - CACHE');
+    const cepCache = await this.cacheManager.get(cep);
+    console.log(cepCache);
+    if (cepCache) {
+      this.dto.toTextCepDTO(cepCache as string);
+    }
+    return null;
+  }
+
+  async saveCepCache(cep: string, data: ResponseCepAPIDTO): Promise<void> {
+    await this.cacheManager.set(
+      new String(cep).toString(),
+      this.dto.toCepTextDTO(data),
+      0,
+    );
+  }
+
+  async getCep(cep: GetCepDTO): Promise<ResponseCepAPIDTO> {
+    // 1 - pegar cep no no cache
+    const cepCache = await this.getCepCache(cep.cep);
+    if (cepCache) return cepCache;
+    console.log(cepCache);
+
+    //2 - pegar cep no banco de dados local e salvar no cache
+    const cepDB = await this.getCepDatabase(cep.cep);
+    if (cepDB) return cepDB;
+
+    // 3 - pegar na api da viacep e salvar no banco de dados local e no cache
+    return this.getCepViacep(cep.cep);
+  }
+
   getCepMock(cep: GetCepDTO): Promise<ResponseCepAPIDTO> {
     return new Promise<ResponseCepAPIDTO>((resolve) => {
       console.log(cep);
