@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   CreateUserDTO,
   FindAllUsersByNameDTO,
@@ -9,6 +10,7 @@ import {
 import { UserDTO } from './dto/user.factory';
 import { UserService } from './user.service';
 
+@ApiTags('users')
 @Controller('api/v1/users')
 export class UserController {
   constructor(
@@ -17,11 +19,13 @@ export class UserController {
   ) {}
 
   @Post()
+  @ApiOperation({ summary: 'Criar novo usuários' })
   async create(@Body() data: CreateUserDTO): Promise<ResponseUserDTO> {
     return this.dto.toDTO(await this.userService.create({ ...data }));
   }
 
   @Get()
+  @ApiOperation({ summary: 'Pegar todos registros por nomes [nome1, nome2]' })
   async findAll(
     @Query() usersName: FindAllUsersByNameDTO,
   ): Promise<ResponseUserDTO[]> {
@@ -31,6 +35,7 @@ export class UserController {
   }
 
   @Get(':userEmail')
+  @ApiOperation({ summary: 'Pegar unico registro por email' })
   async find(@Param() userEmail: FindUserByEmailDTO): Promise<ResponseUserDTO> {
     return this.dto.toDTO(
       await this.userService.findByUserEmail(userEmail.userEmail),
@@ -38,6 +43,7 @@ export class UserController {
   }
 
   @Put(':userEmail')
+  @ApiOperation({ summary: 'Atualizar dados a por email' })
   async update(
     @Param() userEmail: FindUserByEmailDTO,
     @Body() data: UpdateUserDTO,
