@@ -73,12 +73,12 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 Nest is [MIT licensed](LICENSE).
 
 ## Stack
-- ORM Prisma
-- axios
-- class-transformer
-- class-validator
+- Prisma ORM
+- HttpService (nestjs/axios)
+- class-transformer (dto)
+- class-validator (dto)
 - cache-manager
-- express
-- jest
-- swc
+- express (server http)
+- jest (test)
+- swc (rust)
 - swagger (open api)
