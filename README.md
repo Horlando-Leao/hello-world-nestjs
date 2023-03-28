@@ -81,3 +81,4 @@ Nest is [MIT licensed](LICENSE).
 - express
 - jest
 - swc
+- swagger (open api)
