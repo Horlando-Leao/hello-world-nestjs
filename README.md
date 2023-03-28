@@ -100,5 +100,5 @@ Nest is [MIT licensed](LICENSE).
 - cache-manager
 - express (server http)
 - jest (test)
-- swc (rust)
+- swc - https://docs.nestjs.com/recipes/swc
 - swagger (open api)
