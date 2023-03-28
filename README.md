@@ -41,8 +41,21 @@ $ npm run start
 # watch mode
 $ npm run start:dev
 
+# watch mode swc (fast)
+$ npm run start:swc
+
 # production mode
 $ npm run start:prod
+```
+
+## Build app
+
+```bash
+# build
+$ npm run build
+
+# build swc (fast)
+$ npm run build:swc
 ```
 
 ## Test
