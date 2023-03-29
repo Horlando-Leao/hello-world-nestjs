@@ -32,6 +32,13 @@
 $ npm install
 ```
 
+## First time to run project 
+
+```bash
+# create file enviroment
+$ cp env.example .env
+```
+
 ## Running the app
 
 ```bash
